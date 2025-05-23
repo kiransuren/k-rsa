@@ -34,7 +34,6 @@ def sieve_of_eratosthenes():
     for idx in range(0, PRIME_LIST_LENGTH):
         # check if current number has already been 
         # determined as a composite
-        print(f"IDX: {idx} | {numbers_list[idx]}")
         if(not numbers_list[idx]):
             continue
 
@@ -51,9 +50,20 @@ def find_prime_list(numbers_list):
     return [2*i+3 for i, val in enumerate(numbers_list) if val]
 
 # Generate and check prime list from sieve of eratosthenes
-print(sieve_of_eratosthenes())
 prime_list = find_prime_list(sieve_of_eratosthenes())
-print(prime_list)
 for i in prime_list:
     if(not primaility_check(i)):
         print(f"Non-prime found! {i}")
+
+# Randomly pick 2 unique prime numbers 
+p = prime_list[random.randint(0,len(prime_list)-1)]
+q = prime_list[random.randint(0,len(prime_list)-1)]
+while p == q:
+    q = prime_list[random.randint(0,len(prime_list)-1)]
+print(f"p: {p}")
+print(f"q: {q}")
+
+
+# Compute the modulus
+n = p*q
+print(f"Key Length: {n.bit_length()}")
