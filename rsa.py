@@ -23,31 +23,35 @@ def generate_naive_large_prime():
             return num
 
 def sieve_of_eratosthenes():
-    PRIME_NUM_LIMIT = math.ceil(1000000000)
-    PRIME_NUM_LIMIT_ROOT = math.ceil(PRIME_NUM_LIMIT**0.5)
+    # generate the list of primes from 3 to PRIME_NUM_LIMIT
+    PRIME_NUM_LIMIT = 10000
+    PRIME_LIST_LENGTH = math.ceil(PRIME_NUM_LIMIT/2 - 1) # length of list is odd numbers from 3 to PRIME_NUM_LIMIT
 
     # initialize list of all numbers in range
     # (assume numbers are all primes)
-    numbers_list = [True] * PRIME_NUM_LIMIT_ROOT
+    numbers_list = [True] * PRIME_LIST_LENGTH 
 
-    for i in range(1,PRIME_NUM_LIMIT_ROOT):
+    for idx in range(0, PRIME_LIST_LENGTH):
         # check if current number has already been 
         # determined as a composite
-        if(not numbers_list[i]):
+        print(f"IDX: {idx} | {numbers_list[idx]}")
+        if(not numbers_list[idx]):
             continue
+
         x = 2
         # Mark multiples of current prime as composite
-        while x*(i+1) <= PRIME_NUM_LIMIT_ROOT:
-            numbers_list[(i+1)*x-1] = False
+        while x*(2*idx+3) <= PRIME_NUM_LIMIT:
+            if(x*(2*idx+3) % 2 != 0):
+                # mark odd number multiples (ignore even numbers)
+                numbers_list[int((x*(2*idx+3)-3)/2)] = False
             x += 1
-        
     return numbers_list
 
 def find_prime_list(numbers_list):
-    return [i+1 for i, val in enumerate(numbers_list) if val]
+    return [2*i+3 for i, val in enumerate(numbers_list) if val]
 
-print(find_prime_list(sieve_of_eratosthenes()))
-
+# Generate and check prime list from sieve of eratosthenes
+print(sieve_of_eratosthenes())
 prime_list = find_prime_list(sieve_of_eratosthenes())
 print(prime_list)
 for i in prime_list:
