@@ -2,6 +2,13 @@ import random
 import sys
 import math
 
+'''
+Implementation of the RSA Cryptosystem
+
+References:
+https://en.wikipedia.org/wiki/RSA_cryptosystem#Operation
+'''
+
 def primaility_check(num):
     if(num % 2 == 0 and num != 2):
         # Number is NOT prime as 2 is a factor
@@ -49,21 +56,43 @@ def sieve_of_eratosthenes():
 def find_prime_list(numbers_list):
     return [2*i+3 for i, val in enumerate(numbers_list) if val]
 
+def gcd(a,b):
+    # Calculates the greatest common divisor of two integers
+    # using recursive Euclidean Algorithm
+    if(a % b == 0):
+        return b
+    return gcd(b, a % b)
+
 # Generate and check prime list from sieve of eratosthenes
 prime_list = find_prime_list(sieve_of_eratosthenes())
 for i in prime_list:
     if(not primaility_check(i)):
         print(f"Non-prime found! {i}")
 
-# Randomly pick 2 unique prime numbers 
+# Randomly pick 2 unique prime numbers
+print("=== Choose two large prime numbers p & q ===")
 p = prime_list[random.randint(0,len(prime_list)-1)]
 q = prime_list[random.randint(0,len(prime_list)-1)]
 while p == q:
     q = prime_list[random.randint(0,len(prime_list)-1)]
 print(f"p: {p}")
 print(f"q: {q}")
-
+print("")
 
 # Compute the modulus
+print("=== Compute modulus ===")
 n = p*q
+print(f"Modulus: {n}")
 print(f"Key Length: {n.bit_length()}")
+print("\n")
+
+# Calculate Carmicheal Totient function of modulus
+lambda_modulus = int(n / gcd(p,q))  # force as integer, which it should be
+print(f"Lambda of modulus (SECRET): {lambda_modulus}")
+
+# Choose public/encryption exponent e
+# use the smallest and fastest value
+e = 3
+
+# Determine private/decryption exponent d using
+# modular mutliplicative inverse operation 
