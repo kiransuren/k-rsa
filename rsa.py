@@ -63,6 +63,39 @@ def gcd(a,b):
         return b
     return gcd(b, a % b)
 
+def gcde(a,b):
+    # Calculates the greatest common divisor of two integers
+    # using Extended Euclidean Algorithm 
+    r0 = a
+    r1 = b
+    s0 = 1
+    s1 = 0
+    t0 = 0
+    t1 = 1
+
+    while (r1 != 0):
+        # Calculate quotient
+        q = (r0 - (r0 % r1)) / r1 # calculate quotient
+
+        # Calculate s
+        s = s0 - q*s1
+        s0 = s1
+        s1 = s
+
+        # Calculate t
+        t = t0 - q*t1
+        t0 = t1
+        t1 = t
+
+        # Calculate new remainder
+        r = r0 - q*r1
+        r0 = r1
+        r1 = r
+
+    return (r0, t0, s0)
+
+
+
 # Generate and check prime list from sieve of eratosthenes
 prime_list = find_prime_list(sieve_of_eratosthenes())
 for i in prime_list:
@@ -87,12 +120,38 @@ print(f"Key Length: {n.bit_length()}")
 print("\n")
 
 # Calculate Carmicheal Totient function of modulus
-lambda_modulus = int(n / gcd(p,q))  # force as integer, which it should be
+lambda_modulus = int(math.fabs((p-1) * (q-1)) / gcd(p-1,q-1))  # force as integer, which it should be
 print(f"Lambda of modulus (SECRET): {lambda_modulus}")
 
 # Choose public/encryption exponent e
 # use the smallest and fastest value
-e = 3
+for i in prime_list:
+    if(lambda_modulus % i != 0):
+        e = i
+        break
+print(f"Encoding Exponent: {e}")
 
 # Determine private/decryption exponent d using
-# modular mutliplicative inverse operation 
+# modular mutliplicative inverse operation
+print(gcde(lambda_modulus, e))
+remainder, bezout1, bezout2 = gcde(lambda_modulus, e)
+# Verify procedure was done correctly 
+print(math.floor(bezout1 * e + bezout2 * lambda_modulus) == remainder )
+
+if(bezout1 < 0):
+    # to get result which is positive and lower than lambda_modulus
+    # use fact that |bezout1| < lambda_modulus provided by algorithm
+    bezout1 = bezout1 + lambda_modulus
+
+d = int(bezout1)
+print(f"PRIVATE KEY: {d}")
+
+
+### Test encryption ###
+# NOTE: m must be strictly less than n
+m = 3233
+print(f"Test Message: {m}")
+c = (m**e) % n
+print(f"Encrypted ciphertext: {c}")
+m_unencrypted = (c**d) % n
+print(f"Unencrypted Message: {m_unencrypted}")
